@@ -25,3 +25,7 @@ E:\learnathon\practice\web api\SuperHero\SuperHero\obj\Debug\net6.0\refint\Super
 E:\learnathon\practice\web api\SuperHero\SuperHero\obj\Debug\net6.0\SuperHero.pdb
 E:\learnathon\practice\web api\SuperHero\SuperHero\obj\Debug\net6.0\SuperHero.genruntimeconfig.cache
 E:\learnathon\practice\web api\SuperHero\SuperHero\obj\Debug\net6.0\ref\SuperHero.dll
+E:\learnathon\practice\web api\SuperHero\SuperHero\bin\Debug\net6.0\Microsoft.AspNetCore.JsonPatch.dll
+E:\learnathon\practice\web api\SuperHero\SuperHero\bin\Debug\net6.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+E:\learnathon\practice\web api\SuperHero\SuperHero\bin\Debug\net6.0\Newtonsoft.Json.dll
+E:\learnathon\practice\web api\SuperHero\SuperHero\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll
