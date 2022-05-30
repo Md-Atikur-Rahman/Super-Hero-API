@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 
 namespace SuperHero.Controllers
 {
@@ -7,51 +8,50 @@ namespace SuperHero.Controllers
     [ApiController]
     public class SuperHeroController : ControllerBase
     {
-        private static List<SuperHero> heroes = new List<SuperHero>();
+        private readonly IConfiguration _configuration;
 
-        [HttpGet]
-        public ActionResult<List<SuperHero>> Get()
+        public SuperHeroController(IConfiguration configuration)
         {
-            return Ok(heroes);
+            _configuration = configuration;
         }
 
-        [HttpGet("id")]
-        public ActionResult<SuperHero> Get(int id)
+        [HttpGet]
+        public JsonResult Get()
         {
-            var hero = heroes.Find(x => x.Id == id);
-            if (hero == null)
-                return BadRequest("hero not found");
-            return Ok(hero);
+            MongoClient dbclient = new MongoClient(_configuration.GetConnectionString("ShAppCon"));
+            var dblist = dbclient.GetDatabase("testdb").GetCollection<SuperHero>("SuperHero").AsQueryable();
+            return new JsonResult(dblist);
         }
 
         [HttpPost]
-        public ActionResult<List<SuperHero>> AddHero(SuperHero hero)
+        public JsonResult Post(SuperHero hero)
         {
-            heroes.Add(hero);
-            return Get();
+            MongoClient dbclient = new MongoClient(_configuration.GetConnectionString("ShAppCon"));
+            dbclient.GetDatabase("testdb").GetCollection<SuperHero>("SuperHero").InsertOne(hero);
+            return new JsonResult("Added succesfully");
         }
 
         [HttpPut]
-        public ActionResult<string> Update(SuperHero req)
+        public JsonResult Pust(SuperHero hero)
         {
-            var hero = heroes.Find(x => x.Id == req.Id);
-            if (hero == null)
-                return BadRequest("hero not found");
-            hero.Name = req.Name;
-            hero.FirstName = req.FirstName;
-            hero.LastName = req.LastName;
-            hero.City = req.City;
-            return Ok("Hero updated");
+            MongoClient dbclient = new MongoClient(_configuration.GetConnectionString("ShAppCon"));
+            var filter = Builders<SuperHero>.Filter.Eq("HeroId", hero.HeroId);
+            var update = Builders<SuperHero>.Update.Set("Name", hero.Name)
+                                                 .Set("FirstName", hero.FirstName)
+                                                 .Set("LastName", hero.LastName)
+                                                 .Set("City", hero.City);
+            dbclient.GetDatabase("testdb").GetCollection<SuperHero>("SuperHero").UpdateOne(filter, update);
+            return new JsonResult("updated succesfully");
         }
 
         [HttpDelete]
-        public ActionResult<String> Remove(int id)
+        public JsonResult Delete(int id)
         {
-            var hero = heroes.Find(x => x.Id == id);
-            if (hero == null)
-                return BadRequest("hero not found");
-            heroes.Remove(hero);
-            return Ok("hero deleted");
+            MongoClient dbclient = new MongoClient(_configuration.GetConnectionString("ShAppCon"));
+
+            var filter = Builders<SuperHero>.Filter.Eq("HeroId", id);
+            dbclient.GetDatabase("testdb").GetCollection<SuperHero>("SuperHero").DeleteOne(filter);
+            return new JsonResult("Deleted Successfully");
         }
     }
 }
